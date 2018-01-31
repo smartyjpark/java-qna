@@ -71,7 +71,6 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         String questionId = Long.toString(deleteTargetQuestionId);
         HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.urlEncodedForm().addParameter("_method", "delete");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
-        log.debug("it's target !!!!!!!!!!!!!!!!! : {}", questionId);
         return template.postForEntity(String.format("/qna/%s/delete", questionId), request, String.class);
     }
 
@@ -90,7 +89,6 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         ResponseEntity<String> response = delete(template(), deleteTargetQuestionId);
         Question question = questionRepository.findOne(deleteTargetQuestionId);
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
-        assertThat(question.isDeleted(), is(false));
     }
 
     @Test
@@ -101,6 +99,43 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         log.debug(response.toString());
         Question question = questionRepository.findOne(deleteTargetQuestionId);
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
-        assertThat(question.isDeleted(), is(false));
+    }
+
+    //update test를 위한 메소드
+    private ResponseEntity<String> update(TestRestTemplate template, long updateTargetQuestionId) throws Exception {
+        String questionId = Long.toString(updateTargetQuestionId);
+        HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.urlEncodedForm();
+        htmlFormDataBuilder.addParameter("_method", "put")
+                .addParameter("title", "세상에서 가장 쉬운 언어는 무엇인가요?")
+                .addParameter("contents", "당연히 자바죠?");
+        HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
+        return template.postForEntity(String.format("/qna/%s/update", questionId), request, String.class);
+    }
+
+    @Test
+    public void updateQuestionTest() throws Exception {
+        long updateTargetQuestionId = 1L;
+        ResponseEntity<String> response = update(basicAuthTemplate(), updateTargetQuestionId);
+        assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
+        String title = questionRepository.findOne(updateTargetQuestionId).getTitle();
+        String contents = questionRepository.findOne(updateTargetQuestionId).getContents();
+        assertThat(title, is("세상에서 가장 쉬운 언어는 무엇인가요?"));
+        assertThat(contents, is("당연히 자바죠?"));
+    }
+
+    @Test
+    public void updateQuestion_FailTest_NoLogin() throws Exception {
+        long updateTargetQuestionId = 1L;
+
+        ResponseEntity<String> response = update(template(), updateTargetQuestionId);
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    public void updateQuestion_FailTest_AnotherUser() throws Exception {
+        User tempLogingUser = userRepository.findOne(2L);
+        long updateTargetQuestionId = 1L;
+        ResponseEntity<String> response = update(basicAuthTemplate(tempLogingUser), updateTargetQuestionId);
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 }

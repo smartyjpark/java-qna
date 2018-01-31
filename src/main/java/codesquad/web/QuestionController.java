@@ -13,10 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -25,11 +22,13 @@ import javax.annotation.Resource;
 public class QuestionController {
     private static final Logger log = LoggerFactory.getLogger(QuestionController.class);
 
-    @Autowired
-    QuestionRepository questionRepository;
-
     @Resource(name = "qnaService")
     private QnaService qnaService;
+
+    @GetMapping("")
+    public String showList() {
+        return "redirect:/";
+    }
 
     @PostMapping("")
     public String create(@LoginUser User user, Question question) {
@@ -40,6 +39,12 @@ public class QuestionController {
     @DeleteMapping("/{id}/delete")
     public String delete(@PathVariable long id, @LoginUser User user) throws Exception {
         qnaService.deleteQuestion(user, id);
+        return "redirect:/";
+    }
+
+    @PutMapping("/{id}/update")
+    public String update(@PathVariable long id, @LoginUser User user, Question question) throws Exception {
+        qnaService.update(user, id, question);
         return "redirect:/";
     }
 }

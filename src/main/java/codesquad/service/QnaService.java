@@ -40,9 +40,12 @@ public class QnaService {
         return questionRepository.findOne(id);
     }
 
-    public Question update(User loginUser, long id, Question updatedQuestion) {
-        // TODO 수정 기능 구현
-        return null;
+    public Question update(User loginUser, long id, Question updatedQuestion) throws CannotDeleteException {
+        Question question = findById(id);
+        if (loginUser.getId() != question.getWriter().getId()) throw new CannotDeleteException("You can't update this question, because it's not your question.");
+        question.setTitle(updatedQuestion.getTitle());
+        question.setContents(updatedQuestion.getContents());
+        return questionRepository.save(question);
     }
 
     @Transactional
