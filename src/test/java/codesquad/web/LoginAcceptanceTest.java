@@ -15,6 +15,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import support.test.AcceptanceTest;
 import util.HtmlFormDataBuilder;
 
 import javax.servlet.http.HttpSession;
@@ -25,7 +26,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class LoginAcceptanceTest {
+public class LoginAcceptanceTest extends AcceptanceTest {
     private static final Logger log = LoggerFactory.getLogger(LoginAcceptanceTest.class);
 
     @Autowired
@@ -34,7 +35,8 @@ public class LoginAcceptanceTest {
     @Test
     public void loginTest_Success() throws Exception {
         HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.urlEncodedForm();
-        htmlFormDataBuilder.addParameter("userId", "javajigi").addParameter("password", "test");
+        htmlFormDataBuilder.addParameter("userId", "javajigi")
+                .addParameter("password", "test");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
 
         ResponseEntity<String> response = template.postForEntity("/users/login", request, String.class);
@@ -47,7 +49,8 @@ public class LoginAcceptanceTest {
     @Test
     public void loginTest_Fail_InvalidPassword() throws Exception {
         HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.urlEncodedForm();
-        htmlFormDataBuilder.addParameter("userId", "javajigi").addParameter("password", "asdfasdftest");
+        htmlFormDataBuilder.addParameter("userId", "javajigi")
+                .addParameter("password", "asdfasdftest");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
 
         ResponseEntity<String> response = template.postForEntity("/users/login", request, String.class);
@@ -58,7 +61,8 @@ public class LoginAcceptanceTest {
     @Test
     public void loginTest_Fail_InvalidId() throws Exception {
         HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.urlEncodedForm();
-        htmlFormDataBuilder.addParameter("userId", "asdfasdfasdf").addParameter("password", "test");
+        htmlFormDataBuilder.addParameter("userId", "asdfasdfasdf")
+                .addParameter("password", "test");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
 
         ResponseEntity<String> response = template.postForEntity("/users/login", request, String.class);
