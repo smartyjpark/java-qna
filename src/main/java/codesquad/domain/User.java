@@ -88,6 +88,10 @@ public class User extends AbstractEntity {
     public UserDto toUserDto() {
         return new UserDto(this.userId, this.password, this.name, this.email);
     }
+
+    public boolean equalsUser(User user) {
+        return user.getId() == getId();
+    }
     
     @JsonIgnore
     public boolean isGuestUser() {

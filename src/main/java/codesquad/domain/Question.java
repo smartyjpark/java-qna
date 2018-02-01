@@ -18,11 +18,15 @@ import codesquad.UnAuthorizedException;
 import org.hibernate.annotations.Where;
 
 import codesquad.dto.QuestionDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable {
+    private static final Logger log = LoggerFactory.getLogger(Question.class);
+    
     @Size(min = 3, max = 100)
     @Column(length = 100, nullable = false)
     private String title;
@@ -64,7 +68,6 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         if (!isOwner(loginUser)) {
             throw new UnAuthorizedException();
         }
-
         this.deleted = true;
     }
 
@@ -130,4 +133,6 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     public String toString() {
         return "Question [id=" + getId() + ", title=" + title + ", contents=" + contents + ", writer=" + writer + "]";
     }
+
+
 }
