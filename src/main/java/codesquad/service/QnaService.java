@@ -40,20 +40,16 @@ public class QnaService {
         return questionRepository.findOne(id);
     }
 
-    public Question update(User loginUser, long id, Question updatedQuestion) throws CannotDeleteException {
-        Question question = findById(id);
-        if (loginUser.getId() != question.getWriter().getId()) throw new CannotDeleteException("You can't update this question, because it's not your question.");
-        question.setTitle(updatedQuestion.getTitle());
-        question.setContents(updatedQuestion.getContents());
-        return questionRepository.save(question);
+    @Transactional
+    public void update(User loginUser, long id, Question updatedQuestion) throws CannotDeleteException {
+        Question original = findById(id);
+        original.update(loginUser, updatedQuestion);
     }
 
     @Transactional
-    public Question deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
-        Question question = questionRepository.findOne(questionId);
-        if (loginUser.getId() != question.getWriter().getId()) throw new CannotDeleteException("You can't delete this question, because it's not your question.");
-        question.setDeleted(true);
-        return questionRepository.save(question);
+    public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
+        Question target = questionRepository.findOne(questionId);
+        target.delete(loginUser);
     }
 
     public Iterable<Question> findAll() {

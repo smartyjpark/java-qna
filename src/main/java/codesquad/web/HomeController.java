@@ -19,8 +19,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model) {
-        List<Question> questions = (List<Question>) qnaService.findAll();
-        model.addAttribute("questions", questions);
+        model.addAttribute("questions", qnaService.findAll());
         return "home";
     }
 }

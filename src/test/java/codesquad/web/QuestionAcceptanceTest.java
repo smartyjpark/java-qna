@@ -42,9 +42,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.urlEncodedForm();
         htmlFormDataBuilder
                 .addParameter("title", "세상에서 가장 쉬운 언어는 무엇인가요?")
-                .addParameter("contents", "당연히 자바죠?")
-                .addParameter("create_date", "1517379142690")
-                .addParameter("deleted", "false");
+                .addParameter("contents", "당연히 자바죠?");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
         log.debug(request.toString());
         return template.postForEntity("/qna", request, String.class);
@@ -67,7 +65,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     //delete test를 위한 메소드
     private ResponseEntity<String> delete(TestRestTemplate template, long deleteTargetQuestionId) throws Exception {
         String questionId = Long.toString(deleteTargetQuestionId);
-        HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.urlEncodedForm().addParameter("_method", "delete");
+        HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.delete();
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
         return template.postForEntity(String.format("/qna/%s/delete", questionId), request, String.class);
     }
@@ -102,10 +100,9 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     //update test를 위한 메소드
     private ResponseEntity<String> update(TestRestTemplate template, long updateTargetQuestionId) throws Exception {
         String questionId = Long.toString(updateTargetQuestionId);
-        HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.urlEncodedForm();
-        htmlFormDataBuilder.addParameter("_method", "put")
-                .addParameter("title", "세상에서 가장 쉬운 언어는 무엇인가요?")
-                .addParameter("contents", "당연히 자바죠?");
+        HtmlFormDataBuilder htmlFormDataBuilder = HtmlFormDataBuilder.put();
+        htmlFormDataBuilder.addParameter("title", "세상에서 가장 쉬운 언어는 무엇인가요?")
+                            .addParameter("contents", "당연히 자바죠?");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
         return template.postForEntity(String.format("/qna/%s/update", questionId), request, String.class);
     }
