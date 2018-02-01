@@ -4,8 +4,6 @@ import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
 import codesquad.domain.UserRepository;
-import codesquad.security.LoginUser;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

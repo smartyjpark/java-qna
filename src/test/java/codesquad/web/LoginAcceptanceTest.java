@@ -1,8 +1,6 @@
 package codesquad.web;
 
 
-import codesquad.domain.UserRepository;
-import codesquad.security.HttpSessionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -11,15 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import support.test.AcceptanceTest;
 import util.HtmlFormDataBuilder;
-
-import javax.servlet.http.HttpSession;
-import java.util.Arrays;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
