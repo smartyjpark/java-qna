@@ -20,6 +20,7 @@ import org.hibernate.annotations.Where;
 import codesquad.dto.QuestionDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
@@ -87,6 +88,10 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         this.answers = answers;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
@@ -107,9 +112,15 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         this.writer = loginUser;
     }
 
+    @Transactional
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
         answers.add(answer);
+    }
+
+    @Transactional
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
     }
 
     public boolean isOwner(User loginUser) {
@@ -122,7 +133,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
 
     @Override
     public String generateUrl() {
-        return String.format("/questions/%d", getId());
+        return String.format("/api/questions/%d", getId());
     }
 
     public QuestionDto toQuestionDto() {

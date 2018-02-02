@@ -62,7 +62,7 @@ public class ApiQuestionController {
 
     @PutMapping("{questionId}")
     public ResponseEntity<Void> update(@PathVariable long questionId, @LoginUser User user, @Valid @RequestBody QuestionDto questionDto) throws Exception {
-        qnaService.update(user, questionId, questionDto.toQuestion());
+        qnaService.updateQuestion(user, questionId, questionDto.toQuestion());
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/api/questions/{questionId}"));
         return new ResponseEntity<Void>(headers, HttpStatus.OK);
