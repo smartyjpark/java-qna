@@ -60,8 +60,8 @@ public class Question extends AbstractEntity implements UrlGeneratable {
             throw new UnAuthorizedException();
         }
 
-        this.title = target.title;
-        this.contents = target.contents;
+        this.title = target.getTitle();
+        this.contents = target.getContents();
     }
 
     public void delete(User loginUser) {
@@ -131,8 +131,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
 
     @Override
     public String toString() {
-        return "Question [id=" + getId() + ", title=" + title + ", contents=" + contents + ", writer=" + writer + "]";
+        return "Question [id=" + getId() + ", title=" + title + ", contents=" + contents + ", writer=" + writer + ", deleted=" + deleted + "]";
     }
-
 
 }

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/qna")
+@RequestMapping("/api/questions")
 public class ApiQuestionController {
     private static final Logger log = LoggerFactory.getLogger(ApiQuestionController.class);
     
@@ -51,19 +51,20 @@ public class ApiQuestionController {
         return new QuestionsDto(questionDtoList);
     }
 
-    @DeleteMapping("{questionId}/delete")
+    @DeleteMapping("{questionId}")
     public ResponseEntity<Void> delete(@PathVariable long questionId, @LoginUser User user) throws Exception {
         qnaService.deleteQuestion(user ,questionId);
+        log.debug("Deleted question! {}", qnaService.findById(questionId));
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/api/qna/"));
-        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+        headers.setLocation(URI.create("/api/questions/{questionId}"));
+        return new ResponseEntity<Void>(headers, HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("{questionId}/update")
+    @PutMapping("{questionId}")
     public ResponseEntity<Void> update(@PathVariable long questionId, @LoginUser User user, @Valid @RequestBody QuestionDto questionDto) throws Exception {
         qnaService.update(user, questionId, questionDto.toQuestion());
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/api/qna/"));
-        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+        headers.setLocation(URI.create("/api/questions/{questionId}"));
+        return new ResponseEntity<Void>(headers, HttpStatus.OK);
     }
 }

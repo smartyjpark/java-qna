@@ -65,6 +65,10 @@ public abstract class AcceptanceTest {
         return basicAuthTemplate(loginUser).getForObject(location, responseType);
     }
 
+    protected <T> T getResource(String location, Class<T> responseType) {
+        return basicAuthTemplate().getForObject(location, responseType);
+    }
+
     protected User defaultUser() {
         return findByUserId(DEFAULT_LOGIN_USER);
     }
