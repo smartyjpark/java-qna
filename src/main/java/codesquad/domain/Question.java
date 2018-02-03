@@ -1,7 +1,10 @@
 package codesquad.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,7 +17,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.validation.constraints.Size;
 
+import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
+import codesquad.security.LoginUser;
 import org.hibernate.annotations.Where;
 
 import codesquad.dto.QuestionDto;
@@ -27,7 +32,7 @@ import support.domain.UrlGeneratable;
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable {
     private static final Logger log = LoggerFactory.getLogger(Question.class);
-    
+
     @Size(min = 3, max = 100)
     @Column(length = 100, nullable = false)
     private String title;
@@ -69,7 +74,26 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         if (!isOwner(loginUser)) {
             throw new UnAuthorizedException();
         }
+        if (!areAnswersAllMineOrEmpty()) {
+
+            throw new UnAuthorizedException("모든 답변이 자신의 것이어야 글을 삭제할 수 있습니다.");
+        }
         this.deleted = true;
+        deleteAnswers();
+    }
+
+    private void deleteAnswers() {
+        answers.forEach(answer -> answer.delete(writer));
+    }
+
+    public boolean areAnswersAllMineOrEmpty() {
+        log.debug("it's answers!! : {}", answers);
+        boolean result = answers.stream()
+                .filter(answer -> answer.getWriter().equals(writer))
+                .collect(Collectors.toList())
+                .size() == 0;
+        log.debug("Result of areAnswersAllMineOrEmpty : {}", result);
+        return result;
     }
 
     public void setTitle(String title) {

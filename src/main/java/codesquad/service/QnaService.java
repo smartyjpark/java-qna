@@ -87,4 +87,9 @@ public class QnaService {
         Answer target = answerRepository.findOne(id);
         target.delete(loginUser);
     }
+
+    @Transactional
+    public void deleteAnswers(User loginUser, List<Answer> answers) {
+        answers.forEach(answer -> deleteAnswer(loginUser, answer.getId()));
+    }
 }

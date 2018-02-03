@@ -5,9 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import codesquad.domain.Question;
-import codesquad.domain.QuestionRepository;
-import codesquad.domain.User;
+import codesquad.domain.*;
 import codesquad.dto.QuestionDto;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -23,6 +21,9 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @Test
     public void create() throws Exception {
@@ -68,7 +69,12 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
     public void delete() throws Exception {
         basicAuthTemplate().delete("/api/questions/1/", String.class);
         Question dbQuestion = questionRepository.findOne(1L);
+        log.debug("dbQuestion: {}", dbQuestion.toString());
+
         assertTrue(dbQuestion.isDeleted());
+        Answer dbAnswer = answerRepository.findOne(1L);
+        log.debug("dbQuestion: {}", dbAnswer.toString());
+        assertTrue(dbAnswer.isDeleted());
     }
 
     @Test
@@ -94,4 +100,5 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto dbQuestion = getResource("/api/questions/1/", QuestionDto.class);
         assertTrue(dbQuestion.equals(newQuestion));
     }
+
 }

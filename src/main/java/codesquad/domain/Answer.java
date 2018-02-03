@@ -88,7 +88,7 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
     }
 
     public AnswerDto toAnswerDto() {
-        return new AnswerDto(this.getId(), this.contents);
+        return new AnswerDto(getId(), this.contents);
     }
 
     @Override
@@ -98,6 +98,6 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
 
     @Override
     public String toString() {
-        return "Answer [id=" + getId() + ", writer=" + writer + ", contents=" + contents + "]";
+        return "Answer [id=" + getId() + ", writer=" + writer + ", contents=" + contents + ", deleted=" + deleted + "]";
     }
 }
