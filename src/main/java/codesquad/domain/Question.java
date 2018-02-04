@@ -75,23 +75,23 @@ public class Question extends AbstractEntity implements UrlGeneratable {
             throw new UnAuthorizedException();
         }
         if (!areAnswersAllMineOrEmpty()) {
-
             throw new UnAuthorizedException("모든 답변이 자신의 것이어야 글을 삭제할 수 있습니다.");
         }
         this.deleted = true;
-        deleteAnswers();
+        deleteAnswers(loginUser);
     }
 
-    private void deleteAnswers() {
-        answers.forEach(answer -> answer.delete(writer));
+    private void deleteAnswers(User loginUser) {
+        answers.forEach(answer -> answer.delete(loginUser));
     }
 
     public boolean areAnswersAllMineOrEmpty() {
-        log.debug("it's answers!! : {}", answers);
-        boolean result = answers.stream()
-                .filter(answer -> answer.getWriter().equals(writer))
-                .collect(Collectors.toList())
-                .size() == 0;
+        if (answers.size() == 0) return true;
+        log.debug("it's answers!! : {}", answers.toArray()[0].getClass());
+        List <Answer> tempAnswers = answers;
+
+        boolean result = tempAnswers.stream()
+                .allMatch(answer -> answer.getWriter().equals(writer) || answer.isDeleted());
         log.debug("Result of areAnswersAllMineOrEmpty : {}", result);
         return result;
     }

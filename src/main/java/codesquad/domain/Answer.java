@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 import codesquad.UnAuthorizedException;
 import codesquad.dto.AnswerDto;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.transaction.annotation.Transactional;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
@@ -52,11 +53,6 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
             throw new UnAuthorizedException();
         }
         this.deleted = true;
-        removeFromQuestion();
-    }
-
-    private void removeFromQuestion() {
-        this.question.removeAnswer(this);
     }
 
     public User getWriter() {
