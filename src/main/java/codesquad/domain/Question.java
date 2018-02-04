@@ -1,7 +1,9 @@
 package codesquad.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import javax.validation.constraints.Size;
 import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
 import codesquad.security.LoginUser;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Where;
 
 import codesquad.dto.QuestionDto;
@@ -50,6 +53,9 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     @OrderBy("id ASC")
     private List<Answer> answers = new ArrayList<>();
 
+    @CreationTimestamp
+    private Date createdTime;
+
     private boolean deleted;
 
     public Question() {
@@ -70,19 +76,24 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         this.contents = target.getContents();
     }
 
-    public void delete(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new UnAuthorizedException();
         }
         if (!areAnswersAllMineOrEmpty()) {
             throw new UnAuthorizedException("모든 답변이 자신의 것이어야 글을 삭제할 수 있습니다.");
         }
+        List<DeleteHistory> histories = new ArrayList<>();
+        histories.add(new DeleteHistory(ContentType.QUESTION, getId(), loginUser, LocalDateTime.now()));
         this.deleted = true;
-        deleteAnswers(loginUser);
+        histories.addAll(deleteAnswers(loginUser));
+        return histories;
     }
 
-    private void deleteAnswers(User loginUser) {
-        answers.forEach(answer -> answer.delete(loginUser));
+    private List<DeleteHistory> deleteAnswers(User loginUser) {
+        List<DeleteHistory> histories = new ArrayList<>();
+        answers.forEach(answer -> histories.add(answer.delete(loginUser)));
+        return histories;
     }
 
     public boolean areAnswersAllMineOrEmpty() {
@@ -94,6 +105,14 @@ public class Question extends AbstractEntity implements UrlGeneratable {
                 .allMatch(answer -> answer.getWriter().equals(writer) || answer.isDeleted());
         log.debug("Result of areAnswersAllMineOrEmpty : {}", result);
         return result;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 
     public void setTitle(String title) {

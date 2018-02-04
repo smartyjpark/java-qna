@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Answer extends AbstractEntity implements UrlGeneratable {
     @ManyToOne
@@ -48,11 +50,12 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
         this.deleted = false;
     }
 
-    public void delete(User loginUser) {
+    public DeleteHistory delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new UnAuthorizedException();
         }
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, getId(), loginUser, LocalDateTime.now());
     }
 
     public User getWriter() {

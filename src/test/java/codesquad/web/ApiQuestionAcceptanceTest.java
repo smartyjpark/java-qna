@@ -27,6 +27,9 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
+
     @Test
     public void create() throws Exception {
         QuestionDto newQuestion = createQuestionDto(4L);
@@ -72,6 +75,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         basicAuthTemplate(SANJIGI).delete("/api/questions/2/", String.class);
         Question dbQuestion = questionRepository.findOne(2L);
         log.debug("dbQuestion: {}", dbQuestion.toString());
+        log.debug("delete history : {}", deleteHistoryRepository.findAll());
         assertTrue(dbQuestion.isDeleted());
     }
 
